@@ -29,7 +29,9 @@ public class LoginScreen extends AppCompatActivity {
     ObjectAnimator yAnimation;
     ObjectAnimator alphaAnimation;
     AnimatorSet set;
-
+    int x=10;
+    //kefmeomfoermfoerfmoerm
+    //fkemrfkmerferf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
