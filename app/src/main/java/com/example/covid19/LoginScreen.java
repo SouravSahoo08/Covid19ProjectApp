@@ -1,6 +1,7 @@
 package com.example.covid19;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.cardview.widget.CardView;
 
 import android.animation.AnimatorSet;
@@ -9,9 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -22,7 +23,6 @@ import com.google.android.gms.tasks.Task;
 public class LoginScreen extends AppCompatActivity {
     RelativeLayout uiScreen;
     CardView SigninCardButton;
-    CardView FBSigninCardButton;
     GoogleSignInClient mGoogleSignInClient;
     int RC_SIGN_IN = 0;
     ImageView logoImage;
@@ -30,13 +30,13 @@ public class LoginScreen extends AppCompatActivity {
     ObjectAnimator alphaAnimation;
     AnimatorSet set;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         uiScreen = findViewById(R.id.UI);
         SigninCardButton = findViewById(R.id.SigninCardButton);
-        FBSigninCardButton = findViewById(R.id.FBSigninCardButton);
         logoImage = findViewById(R.id.logoimageView);
         animateUI();
 
@@ -59,6 +59,7 @@ public class LoginScreen extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
 
     @Override
@@ -107,7 +108,7 @@ public class LoginScreen extends AppCompatActivity {
 
     private void animateUI() {
         long duration = 2000;
-        alphaAnimation=ObjectAnimator.ofFloat(uiScreen,View.ALPHA, 0.0f, 1.0f).setDuration(duration);
+        alphaAnimation = ObjectAnimator.ofFloat(uiScreen, View.ALPHA, 0.0f, 1.0f).setDuration(duration);
         alphaAnimation.start();
         // animate logo
         yAnimation = ObjectAnimator.ofFloat(logoImage, View.TRANSLATION_Y, -100f, 0f);
@@ -125,13 +126,6 @@ public class LoginScreen extends AppCompatActivity {
         set = new AnimatorSet();
         set.playTogether(yAnimation, alphaAnimation);
         set.start();
-        //animate fb btn
-        yAnimation = ObjectAnimator.ofFloat(FBSigninCardButton, View.TRANSLATION_Y, 100f, 0f);
-        yAnimation.setDuration(duration);
-        alphaAnimation = ObjectAnimator.ofFloat(FBSigninCardButton, View.ALPHA, 0.0f, 1.0f);
-        alphaAnimation.setDuration(duration);
-        set = new AnimatorSet();
-        set.playTogether(yAnimation, alphaAnimation);
-        set.start();
+
     }
 }
