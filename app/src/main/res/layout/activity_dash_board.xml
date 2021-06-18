@@ -7,24 +7,30 @@
     android:background="@color/white"
     tools:context=".DashBoard">
 
+    <!--signout button-->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="#D5D2D2"
-        android:text="signout"
-        android:textColor="#000000"/>
+        android:text="out"
+        android:textColor="#000000"
+        android:textSize="18sp" />
 
+    <!--profile Picture-->
     <androidx.cardview.widget.CardView
         android:id="@+id/ImagecardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        app:cardElevation="3dp"
-        app:cardMaxElevation="1.5dp"
+        app:cardElevation="5dp"
         app:cardBackgroundColor="@color/white"
+        android:outlineAmbientShadowColor="@color/teal_200"
         app:cardCornerRadius="300dp">
 
         <ImageView
@@ -35,15 +41,66 @@
             android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
+    <!--Profile Name-->
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:layout_below="@+id/ImagecardView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="2dp"
         android:text="Sourav sahoo"
         android:textSize="20sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black" />
+
+    <!--Toggle button-->
+    <LinearLayout
+        android:id="@+id/ButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/Name">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/track"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            app:cardCornerRadius="30dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="track"
+                android:textSize="18sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/vac"
+            android:layout_weight="1"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="20dp"
+            app:cardCornerRadius="30dp">
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <!--Tracking-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ButtonLayout"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="5dp"
+        android:scrollbars="vertical"
+        android:id="@+id/countryRecycleView">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>

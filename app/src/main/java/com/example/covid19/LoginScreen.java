@@ -21,15 +21,14 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 public class LoginScreen extends AppCompatActivity {
-    RelativeLayout uiScreen;
-    CardView SigninCardButton;
-    GoogleSignInClient mGoogleSignInClient;
-    int RC_SIGN_IN = 0;
-    ImageView logoImage;
-    ObjectAnimator yAnimation;
-    ObjectAnimator alphaAnimation;
-    AnimatorSet set;
-
+    private RelativeLayout uiScreen;
+    private CardView SigninCardButton;
+    private GoogleSignInClient mGoogleSignInClient;
+    private int RC_SIGN_IN = 0;
+    private ImageView logoImage;
+    private ObjectAnimator yAnimation;
+    private ObjectAnimator alphaAnimation;
+    private AnimatorSet set;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +105,9 @@ public class LoginScreen extends AppCompatActivity {
         }
     }
 
+    final long duration = 2000;
     private void animateUI() {
-        long duration = 2000;
+
         alphaAnimation = ObjectAnimator.ofFloat(uiScreen, View.ALPHA, 0.0f, 1.0f).setDuration(duration);
         alphaAnimation.start();
         // animate logo
