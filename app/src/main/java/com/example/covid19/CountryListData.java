@@ -1,7 +1,5 @@
 package com.example.covid19;
 
-import android.util.Log;
-
 public class CountryListData {
 
     private String countryName;

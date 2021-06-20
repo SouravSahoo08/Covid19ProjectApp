@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class DashBoard extends AppCompatActivity {
     Button signOutBtn;
@@ -114,10 +115,8 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
     }
 
@@ -133,19 +132,23 @@ public class DashBoard extends AppCompatActivity {
                 });
     }
 
-    public class DownloadTask extends AsyncTask<String, Void, String> {
+    public class DownloadTask extends AsyncTask<String, String, String> {
+
+        int switchctrl = 1;
+        ArrayList<CountryListData> myListData = new ArrayList<>();
 
         @SuppressLint({"SetTextI18n", "WrongThread"})
         @Override
         protected String doInBackground(String... urls) {
             StringBuilder result = new StringBuilder();
             URL url;
-
-            // iteration problem here
+            Log.i("url count", String.valueOf(urls.length));
             try {
-                for (int i = 0; i < urls.length; i++) {
-                    Log.i("url", urls[i]);
-                    url = new URL(urls[i]);
+                for (String s : urls) {
+                    Log.i("url", s);
+                    result.delete(0, result.length());
+                    Log.i("background res next", result.toString());
+                    url = new URL(s);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     InputStream in = urlConnection.getInputStream();
                     InputStreamReader reader = new InputStreamReader(in);
@@ -156,75 +159,81 @@ public class DashBoard extends AppCompatActivity {
                         result.append(current);
                         data = reader.read();
                     }
+                    Log.i("background res", result.toString());
+                    publishProgress(result.toString());
+                    Log.i("status", "publishProgress called");
 
-                    return result.toString();
                 }
+                return null;
 
             } catch (Exception e) {
                 e.printStackTrace();
-                //resultTextView.setText("error");
+
                 return null;
             }
-            return null;
         }
 
-        @SuppressLint("SetTextI18n")
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Log.i("postExecute", "called");
+        protected void onProgressUpdate(String... s) {
+            super.onProgressUpdate(s);
+
+            Log.i("progress update", s[0]);
             //interpreting JSON Object and JSON Arrays
-            JSONArray chkArr = null;
-            try {
-                chkArr = new JSONArray(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            //all countries
-            if (chkArr != null) {
+
+            if (switchctrl == 1) {
+                worldJSON(s[0]);
+            } else {
                 try {
-                    JSONArray arr = new JSONArray(s);
-                    CountryListData[] myListData = new CountryListData[arr.length()];
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject jsonPart = arr.getJSONObject(i);
-                        String countryName = jsonPart.getString("country");
-                        String cases = String.valueOf(jsonPart.getLong("cases"));
-
-                        if (!countryName.equals("") && !cases.equals("")) {
-                            myListData[i] = new CountryListData(countryName, cases);
-                            //new CountryListData("India", "238029348"),
-
-                            adapter = new CountryListAdapter(myListData);
-                            recyclerView.setAdapter(adapter);
-
-                        } /*else {
-                    resultTextView.setText("error");
-                    }*/
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //resultTextView.setText("error");
-                }
-            }
-
-            //world
-            else {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String casesInString = String.valueOf(jsonObject.getLong("cases"));
-                    if (!casesInString.equals("")) {
-                        CountryListData[] myListData = new CountryListData[]{
-                                new CountryListData("World", casesInString)
-                        };
-                        adapter = new CountryListAdapter(myListData);
-                        recyclerView.setAdapter(adapter);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    countryJSON(s[0]);
+                } catch (JSONException exception) {
+                    exception.printStackTrace();
                 }
             }
         }
+
+        private void worldJSON(String json) {
+            switchctrl = 2;
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                String casesInString = String.valueOf(jsonObject.getLong("cases"));
+                if (!casesInString.equals("")) {
+                    /*myListData = new CountryListData[]{
+                            new CountryListData("World", casesInString)
+                    };*/
+                    myListData.add(new CountryListData("World", casesInString));
+                    adapter = new CountryListAdapter(getApplicationContext(), myListData);
+                    recyclerView.setAdapter(adapter);
+                    //Log.i("status",adapter.toString());
+                }
+            } catch (JSONException exception) {
+
+                exception.printStackTrace();
+            }
+        }
+
+        private void countryJSON(String json) throws JSONException {
+            switchctrl = 1;
+            JSONArray chkArr = new JSONArray(json);
+            //myListData = new CountryListData[chkArr.length()];
+            for (int i = 0; i < chkArr.length(); i++) {
+                JSONObject jsonPart = chkArr.getJSONObject(i);
+                String countryName = jsonPart.getString("country");
+                String cases = String.valueOf(jsonPart.getLong("cases"));
+
+                if (!countryName.equals("") && !cases.equals("")) {
+                    myListData.add(new CountryListData(countryName, cases));
+                    adapter = new CountryListAdapter(getApplicationContext(), myListData);
+                    recyclerView.setAdapter(adapter);
+                }
+            }
+
+        }
+
+        /*@Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }*/
     }
 }
