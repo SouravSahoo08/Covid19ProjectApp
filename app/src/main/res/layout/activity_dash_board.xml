@@ -93,13 +93,14 @@
     <!--Tracking-->
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="invisible"
-        android:layout_width="match_parent"
+        android:id="@+id/countryRecycleView"
         android:layout_height="match_parent"
         android:layout_below="@id/ButtonLayout"
         android:layout_marginTop="10dp"
         android:paddingHorizontal="5dp"
         android:scrollbars="vertical"
-        android:id="@+id/countryRecycleView">
+        android:layout_width="390dp"
+        android:layout_centerHorizontal="true">
 
     </androidx.recyclerview.widget.RecyclerView>
 

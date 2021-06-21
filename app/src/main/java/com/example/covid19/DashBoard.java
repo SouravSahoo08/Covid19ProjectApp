@@ -1,9 +1,12 @@
 package com.example.covid19;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,7 +47,7 @@ public class DashBoard extends AppCompatActivity {
     RecyclerView recyclerView;
     String statText;
     CountryListAdapter adapter;
-
+    ProgressDialog p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +99,13 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-
+        DownloadTask task = new DownloadTask();
+        //API of disease.sh
+        task.execute("https://disease.sh/v2/all", "https://disease.sh/v3/covid-19/countries");
         tracker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DownloadTask task = new DownloadTask();
-                //API of disease.sh
-                task.execute("https://disease.sh/v2/all", "https://disease.sh/v3/covid-19/countries");
+
                 recyclerView.setVisibility(View.VISIBLE);
 
             }
@@ -132,10 +135,29 @@ public class DashBoard extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     public class DownloadTask extends AsyncTask<String, String, String> {
 
         int switchctrl = 1;
         ArrayList<CountryListData> myListData = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(DashBoard.this);
+            p.setMessage("Setting up data, Please wait...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
 
         @SuppressLint({"SetTextI18n", "WrongThread"})
         @Override
@@ -196,15 +218,21 @@ public class DashBoard extends AppCompatActivity {
             switchctrl = 2;
             try {
                 JSONObject jsonObject = new JSONObject(json);
+                String populationInString = String.valueOf(jsonObject.getLong("population"));
                 String casesInString = String.valueOf(jsonObject.getLong("cases"));
-                if (!casesInString.equals("")) {
-                    /*myListData = new CountryListData[]{
-                            new CountryListData("World", casesInString)
-                    };*/
-                    myListData.add(new CountryListData("World", casesInString));
-                    adapter = new CountryListAdapter(getApplicationContext(), myListData);
-                    recyclerView.setAdapter(adapter);
-                    //Log.i("status",adapter.toString());
+                String activeCaseInString = String.valueOf(jsonObject.getLong("active"));
+                String criticalCaseInString = String.valueOf(jsonObject.getLong("critical"));
+                String recoveredInString = String.valueOf(jsonObject.getLong("recovered"));
+                String deathsInString = String.valueOf(jsonObject.getLong("deaths"));
+                String noOfCountriesInString = String.valueOf(jsonObject.getInt("affectedCountries"));
+                if (!populationInString.equals("") && !casesInString.equals("") && !activeCaseInString.equals("") && !criticalCaseInString.equals("")
+                        && !recoveredInString.equals("") && !deathsInString.equals("") && !noOfCountriesInString.equals("")) {
+
+                    myListData.add(new CountryListData("World", populationInString, casesInString, activeCaseInString, criticalCaseInString, recoveredInString
+                            , deathsInString, noOfCountriesInString));
+                    /*adapter = new CountryListAdapter(getApplicationContext(), myListData);
+                    recyclerView.setAdapter(adapter);*/
+
                 }
             } catch (JSONException exception) {
 
@@ -219,21 +247,36 @@ public class DashBoard extends AppCompatActivity {
             for (int i = 0; i < chkArr.length(); i++) {
                 JSONObject jsonPart = chkArr.getJSONObject(i);
                 String countryName = jsonPart.getString("country");
-                String cases = String.valueOf(jsonPart.getLong("cases"));
+                String populationInString = String.valueOf(jsonPart.getLong("population"));
+                String casesInString = String.valueOf(jsonPart.getLong("cases"));
+                String activeCaseInString = String.valueOf(jsonPart.getLong("active"));
+                String criticalCaseInString = String.valueOf(jsonPart.getLong("critical"));
+                String recoveredInString = String.valueOf(jsonPart.getLong("recovered"));
+                String deathsInString = String.valueOf(jsonPart.getLong("deaths"));
 
-                if (!countryName.equals("") && !cases.equals("")) {
-                    myListData.add(new CountryListData(countryName, cases));
-                    adapter = new CountryListAdapter(getApplicationContext(), myListData);
-                    recyclerView.setAdapter(adapter);
+                if (!countryName.equals("") && !populationInString.equals("") && !casesInString.equals("") && !activeCaseInString.equals("") && !criticalCaseInString.equals("")
+                        && !recoveredInString.equals("") && !deathsInString.equals("")) {
+                    myListData.add(new CountryListData(countryName, populationInString, casesInString, activeCaseInString, criticalCaseInString, recoveredInString
+                            , deathsInString));
+                    /*adapter = new CountryListAdapter(getApplicationContext(), myListData);
+                    recyclerView.setAdapter(adapter);*/
                 }
             }
 
         }
 
-        /*@Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (myListData != null) {
+                p.hide();
+                adapter = new CountryListAdapter(getApplicationContext(), myListData);
+                recyclerView.setAdapter(adapter);
+            } else {
+                p.show();
+            }
 
-        }*/
+        }
+
     }
 }

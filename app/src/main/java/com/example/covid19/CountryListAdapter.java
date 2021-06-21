@@ -35,7 +35,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         final CountryListData myListData = listdata[position];
         holder.cname.setText(listdata[position].getCountryName());
-        holder.stat.setText(listdata[position].getStats());
+        holder.stat.setText(listdata[position].getNo_of_cases());
         dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.custom_dialogbox);
 
@@ -43,9 +43,24 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
             @Override
             public void onClick(View view) {
                 TextView heading = dialog.findViewById(R.id.heading);
-                TextView body = dialog.findViewById(R.id.body);
+                TextView population = dialog.findViewById(R.id.populationText);
+                TextView cases = dialog.findViewById(R.id.casesText);
+                TextView active = dialog.findViewById(R.id.activeCasesText);
+                TextView recovered = dialog.findViewById(R.id.recoveredText);
+                TextView critical = dialog.findViewById(R.id.criticaltext);
+                TextView death = dialog.findViewById(R.id.deathText);
+                TextView affectedCount = dialog.findViewById(R.id.affect_countriesText);
+
                 heading.setText(myListData.getCountryName());
-                body.setText(myListData.getStats());
+                population.setText(myListData.getPopulation());
+                cases.setText(myListData.getNo_of_cases());
+                active.setText(myListData.getNo_of_active_cases());
+                recovered.setText(myListData.getRecovered_cases());
+                critical.setText(myListData.getCritical_cases());
+                death.setText(myListData.getDeaths());
+                if (myListData.getAffected_countries() != null)
+                    affectedCount.setText(myListData.getAffected_countries());
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
             }
         });
@@ -67,7 +82,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
         public ViewHolder(View itemView) {
             super(itemView);
             this.cname = itemView.findViewById(R.id.countryName);
-            this.stat = itemView.findViewById(R.id.stats);
+            this.stat = itemView.findViewById(R.id.no_of_cases);
             relativeLayout = itemView.findViewById(R.id.relativeLayout1);
 
             //animateRelativeLayout();
