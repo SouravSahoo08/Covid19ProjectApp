@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,8 +59,14 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
                 recovered.setText(myListData.getRecovered_cases());
                 critical.setText(myListData.getCritical_cases());
                 death.setText(myListData.getDeaths());
-                if (myListData.getAffected_countries() != null)
+                if (myListData.getCountryName().equals("World")) {
+                    affectedCount.setVisibility(View.VISIBLE);
+                    dialog.findViewById(R.id.affTxt).setVisibility(View.VISIBLE);
                     affectedCount.setText(myListData.getAffected_countries());
+                } else {
+                    affectedCount.setVisibility(View.INVISIBLE);
+                    dialog.findViewById(R.id.affTxt).setVisibility(View.INVISIBLE);
+                }
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
             }

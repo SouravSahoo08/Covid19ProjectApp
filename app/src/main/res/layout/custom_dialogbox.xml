@@ -191,6 +191,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/affTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Affected countries :"

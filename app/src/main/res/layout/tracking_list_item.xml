@@ -12,10 +12,10 @@
         android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
+        android:gravity="center"
         android:text="countryname"
         android:textColor="@color/black"
-        android:textSize="18sp"
-        android:gravity="center" />
+        android:textSize="18sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/no_of_cases"

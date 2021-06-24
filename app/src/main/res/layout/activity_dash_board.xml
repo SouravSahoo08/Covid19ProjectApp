@@ -28,10 +28,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        app:cardElevation="5dp"
-        app:cardBackgroundColor="@color/white"
         android:outlineAmbientShadowColor="@color/teal_200"
-        app:cardCornerRadius="300dp">
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="300dp"
+        app:cardElevation="5dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -46,21 +46,23 @@
         android:id="@+id/Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:layout_below="@+id/ImagecardView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
         android:text="Sourav sahoo"
-        android:textSize="20sp"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <!--Toggle button-->
     <LinearLayout
         android:id="@+id/ButtonLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
+        android:layout_below="@id/Name"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_below="@id/Name">
+        android:visibility="visible">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/track"
@@ -69,9 +71,11 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
+            app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="30dp">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tracktxtbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -81,27 +85,166 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/vac"
-            android:layout_weight="1"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="30dp">
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/vactxtbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Vaccine slot"
+                android:textSize="18sp" />
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
     <!--Tracking-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:visibility="invisible"
-        android:id="@+id/countryRecycleView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/categoryLayout"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ButtonLayout"
-        android:layout_marginTop="10dp"
-        android:paddingHorizontal="5dp"
-        android:scrollbars="vertical"
-        android:layout_width="390dp"
-        android:layout_centerHorizontal="true">
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="invisible">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/countryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:text="Country name"
+            android:textColor="@color/black"
+            android:textSize="19sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="28dp"
+            android:text="Cases"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/countryRecycleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
+            android:scrollbars="vertical"
+            app:layout_constraintTop_toBottomOf="@id/countryName">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--/Tracking-->
+
+    <!--vaccine-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/vacLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ButtonLayout"
+        android:padding="10dp"
+        android:visibility="visible">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/menuBox"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/border"
+            android:elevation="10dp"
+            app:cardCornerRadius="25dp"
+            app:layout_constraintEnd_toEndOf="@id/vacLayout"
+            app:layout_constraintStart_toStartOf="@id/vacLayout"
+            app:layout_constraintTop_toTopOf="@id/vacLayout">
+
+            <RelativeLayout
+                android:layout_width="280dp"
+                android:layout_height="240dp"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="State :" />
+
+                <EditText
+                    android:id="@+id/txtIn1"
+                    android:layout_width="260dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@id/txt1"
+                    android:ems="10"
+                    android:hint="State name"
+                    android:inputType="textAutoComplete"
+                    android:textAllCaps="false"
+                    android:textSize="19dp"
+                    android:textStyle="italic" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtIn1"
+                    android:layout_marginTop="15dp"
+                    android:text="District :" />
+
+                <EditText
+                    android:id="@+id/txtIn2"
+                    android:layout_width="260dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@id/txt2"
+                    android:ems="10"
+                    android:hint="District name"
+                    android:inputType="textAutoComplete"
+                    android:textAllCaps="false"
+                    android:textSize="19dp"
+                    android:textStyle="italic" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/searchVax"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/txtIn2"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="15dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Search"
+                        android:textColor="@color/black" />
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="20dp"
+            android:text="@string/note"
+            android:textColor="#636262"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintTop_toBottomOf="@id/menuBox" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--/Vaccine-->
 
 </RelativeLayout>

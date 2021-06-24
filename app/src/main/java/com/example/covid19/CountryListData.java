@@ -92,8 +92,6 @@ public class CountryListData {
     }
 
     public String getAffected_countries() {
-        if (affected_countries != null)
-            return null;
         return affected_countries;
     }
 

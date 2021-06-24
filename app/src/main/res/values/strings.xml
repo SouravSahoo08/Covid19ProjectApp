@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Covid19</string>
+    <string name="note"><![CDATA[Note: \n>Vaccine slots are allotted by the Government of India. \n\n>If you find slot in CoWin app, book as soon as possible. \n\n>This app only alerts for any new slots allocated.]]></string>
 
 </resources>

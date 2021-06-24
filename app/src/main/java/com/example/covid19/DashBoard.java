@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,9 +46,9 @@ public class DashBoard extends AppCompatActivity {
     TextView name;
     CardView tracker, vaccine;
     RecyclerView recyclerView;
-    String statText;
     CountryListAdapter adapter;
     ProgressDialog p;
+    //String state_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,37 +93,57 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        DownloadTask task = new DownloadTask();
+        TrackingDataDwnld task = new TrackingDataDwnld();
         //API of disease.sh
         task.execute("https://disease.sh/v2/all", "https://disease.sh/v3/covid-19/countries");
         tracker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TextView textView;
+                tracker.setCardBackgroundColor(getResources().getColor(R.color.white));
+                textView = findViewById(R.id.tracktxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.black));
 
-                recyclerView.setVisibility(View.VISIBLE);
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.black));
+                textView = findViewById(R.id.vactxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.white));
 
+                findViewById(R.id.categoryLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.vacLayout).setVisibility(View.INVISIBLE);
             }
         });
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        /*AutoCompleteTextView states = findViewById(R.id.txtIn1);
+        AutoCompleteTextView dist = findViewById(R.id.txtIn2);*/
 
         vaccine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vaccine.setMinimumWidth(140);
+                TextView textView;
+                tracker.setCardBackgroundColor(getResources().getColor(R.color.black));
+                textView = findViewById(R.id.tracktxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.white));
+
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
+                textView = findViewById(R.id.vactxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.black));
+
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
+                findViewById(R.id.vacLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.categoryLayout).setVisibility(View.INVISIBLE);
             }
         });
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        findViewById(R.id.searchVax).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new StateDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/states");
+            }
+        });
     }
-
 
     private void signOut() {
         mGoogleSignInClient.signOut()
@@ -138,13 +159,38 @@ public class DashBoard extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-    public class DownloadTask extends AsyncTask<String, String, String> {
+    private String binarySearching(JSONArray arr, String inputText, String regionType, String regionIDType) throws JSONException {
+        int lb = 0, ub = arr.length() - 1;
+        while (lb <= ub) {
+            int mid = (lb + ub) / 2;
+            JSONObject jsonPart = arr.getJSONObject(mid);
+            int res = inputText.compareToIgnoreCase(jsonPart.getString(regionType));
+            Log.i("sourav", String.valueOf(res));
+            if (res == 0) {
+                Log.i(regionType + " id ", jsonPart.getString(regionIDType));
+                Toast.makeText(DashBoard.this, "Id of" + jsonPart.getString(regionType) + "is" + jsonPart.getString(regionIDType), Toast.LENGTH_LONG).show();
+                String id;
+
+                //checks if searching in district api or state api
+                if (regionIDType.equalsIgnoreCase("district_id")) {
+                    id = String.valueOf(jsonPart.getInt(regionIDType));
+                } else {
+                    id = jsonPart.getString(regionIDType);
+                }
+                Log.i("sourav", id);
+                return id;
+            } else if (res > 0)
+                lb = mid + 1;
+            else
+                ub = mid - 1;
+        }
+        return null;
+    }
+
+    public class TrackingDataDwnld extends AsyncTask<String, String, String> {
 
         int switchctrl = 1;
         ArrayList<CountryListData> myListData = new ArrayList<>();
@@ -190,7 +236,6 @@ public class DashBoard extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
-
                 return null;
             }
         }
@@ -230,9 +275,6 @@ public class DashBoard extends AppCompatActivity {
 
                     myListData.add(new CountryListData("World", populationInString, casesInString, activeCaseInString, criticalCaseInString, recoveredInString
                             , deathsInString, noOfCountriesInString));
-                    /*adapter = new CountryListAdapter(getApplicationContext(), myListData);
-                    recyclerView.setAdapter(adapter);*/
-
                 }
             } catch (JSONException exception) {
 
@@ -258,8 +300,6 @@ public class DashBoard extends AppCompatActivity {
                         && !recoveredInString.equals("") && !deathsInString.equals("")) {
                     myListData.add(new CountryListData(countryName, populationInString, casesInString, activeCaseInString, criticalCaseInString, recoveredInString
                             , deathsInString));
-                    /*adapter = new CountryListAdapter(getApplicationContext(), myListData);
-                    recyclerView.setAdapter(adapter);*/
                 }
             }
 
@@ -278,5 +318,139 @@ public class DashBoard extends AppCompatActivity {
 
         }
 
+    }
+
+    public class StateDataDwnld extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            StringBuilder result = new StringBuilder();
+            result.delete(0, urls.length);
+            URL url;
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                url = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
+
+                while (data != -1) {
+                    char current = (char) data;
+                    result.append(current);
+                    data = reader.read();
+                }
+
+                return result.toString();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Log.i("status 1", "inside vaccine post");
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+
+                String statesInfo = jsonObject.getString("states");
+
+                Log.i("State content", statesInfo);
+
+                JSONArray arr = new JSONArray(statesInfo);
+
+                EditText txtIn1 = findViewById(R.id.txtIn1);
+                //binary searching
+                String resultID = binarySearching(arr, txtIn1.getText().toString(), "state_name", "state_id");
+                Log.i("Sourav", resultID);
+                new DistDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + resultID);
+
+                /*int lb=0,ub=arr.length();
+                while(lb<=ub){
+                    int mid = (lb+ub)/2;
+                    JSONObject jsonPart = arr.getJSONObject(mid);
+
+                    EditText txtIn1 = findViewById(R.id.txtIn1);
+                    int res = txtIn1.getText().toString().compareToIgnoreCase(jsonPart.getString("state_name"));
+                    Log.i("res",String.valueOf(res));
+                    if(res==0){
+                        Log.i("state id ",jsonPart.getString("state_id") );
+                        Toast.makeText(DashBoard.this, "state id of "+ jsonPart.getString("district_name") +" is"+ jsonPart.getString("state_id"), Toast.LENGTH_LONG).show();
+                        String state_id = jsonPart.getString("state_id");
+                        new DistDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/districts/"+state_id);
+                        break;
+                    }
+                    else if (res>0)
+                        lb=mid+1;
+                    else
+                        ub=mid-1;
+                }
+*/
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public class DistDataDwnld extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            StringBuilder result = new StringBuilder();
+            result.delete(0, urls.length);
+            URL url;
+            HttpURLConnection urlConnection = null;
+
+            try {
+
+                url = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = urlConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
+
+                while (data != -1) {
+                    char current = (char) data;
+                    result.append(current);
+                    data = reader.read();
+                }
+
+                return result.toString();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+
+                String distInfo = jsonObject.getString("districts");
+
+                Log.i("Dist content", distInfo);
+
+                JSONArray arr = new JSONArray(distInfo);
+                EditText txtIn2 = findViewById(R.id.txtIn2);
+                //binary searching
+                String resultID = binarySearching(arr, txtIn2.getText().toString(), "district_name", "district_id");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }
