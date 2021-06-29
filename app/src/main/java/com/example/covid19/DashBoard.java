@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -48,102 +50,8 @@ public class DashBoard extends AppCompatActivity {
     RecyclerView recyclerView;
     CountryListAdapter adapter;
     ProgressDialog p;
-    //String state_id;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dash_board);
-        signOutBtn = findViewById(R.id.signout);
-        imageView = findViewById(R.id.imageView);
-        name = findViewById(R.id.Name);
-        tracker = findViewById(R.id.track);
-        vaccine = findViewById(R.id.vac);
-        recyclerView = findViewById(R.id.countryRecycleView);
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
-
-            name.setText(personName);
-            Glide.with(this).load(personPhoto).into(imageView);
-        }
-
-        signOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.signout:
-                        signOut();
-                        break;
-                }
-            }
-        });
-
-        TrackingDataDwnld task = new TrackingDataDwnld();
-        //API of disease.sh
-        task.execute("https://disease.sh/v2/all", "https://disease.sh/v3/covid-19/countries");
-        tracker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView textView;
-                tracker.setCardBackgroundColor(getResources().getColor(R.color.white));
-                textView = findViewById(R.id.tracktxtbtn);
-                textView.setTextColor(getResources().getColor(R.color.black));
-
-                vaccine.setCardBackgroundColor(getResources().getColor(R.color.black));
-                textView = findViewById(R.id.vactxtbtn);
-                textView.setTextColor(getResources().getColor(R.color.white));
-
-                findViewById(R.id.categoryLayout).setVisibility(View.VISIBLE);
-                findViewById(R.id.vacLayout).setVisibility(View.INVISIBLE);
-            }
-        });
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        /*AutoCompleteTextView states = findViewById(R.id.txtIn1);
-        AutoCompleteTextView dist = findViewById(R.id.txtIn2);*/
-
-        vaccine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView textView;
-                tracker.setCardBackgroundColor(getResources().getColor(R.color.black));
-                textView = findViewById(R.id.tracktxtbtn);
-                textView.setTextColor(getResources().getColor(R.color.white));
-
-                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
-                textView = findViewById(R.id.vactxtbtn);
-                textView.setTextColor(getResources().getColor(R.color.black));
-
-                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
-                findViewById(R.id.vacLayout).setVisibility(View.VISIBLE);
-                findViewById(R.id.categoryLayout).setVisibility(View.INVISIBLE);
-            }
-        });
-
-        findViewById(R.id.searchVax).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new StateDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/states");
-            }
-        });
-    }
+    EditText txtIn1;
 
     private void signOut() {
         mGoogleSignInClient.signOut()
@@ -320,6 +228,104 @@ public class DashBoard extends AppCompatActivity {
 
     }
 
+    EditText txtIn2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dash_board);
+        signOutBtn = findViewById(R.id.signout);
+        imageView = findViewById(R.id.imageView);
+        name = findViewById(R.id.Name);
+        tracker = findViewById(R.id.track);
+        vaccine = findViewById(R.id.vac);
+        recyclerView = findViewById(R.id.countryRecycleView);
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            name.setText(personName);
+            Glide.with(this).load(personPhoto).into(imageView);
+        }
+
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.signout:
+                        signOut();
+                        break;
+                }
+            }
+        });
+
+        TrackingDataDwnld task = new TrackingDataDwnld();
+        //API of disease.sh
+        task.execute("https://disease.sh/v2/all", "https://disease.sh/v3/covid-19/countries");
+        tracker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView textView;
+                tracker.setCardBackgroundColor(getResources().getColor(R.color.white));
+                textView = findViewById(R.id.tracktxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.black));
+
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.black));
+                textView = findViewById(R.id.vactxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.white));
+
+                findViewById(R.id.categoryLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.vacLayout).setVisibility(View.INVISIBLE);
+            }
+        });
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        //AutoCompleteTextView states = findViewById(R.id.txtIn1);
+        //AutoCompleteTextView dist = findViewById(R.id.txtIn2);
+
+
+        vaccine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView textView;
+                tracker.setCardBackgroundColor(getResources().getColor(R.color.black));
+                textView = findViewById(R.id.tracktxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.white));
+
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
+                textView = findViewById(R.id.vactxtbtn);
+                textView.setTextColor(getResources().getColor(R.color.black));
+
+                vaccine.setCardBackgroundColor(getResources().getColor(R.color.white));
+                findViewById(R.id.vacLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.categoryLayout).setVisibility(View.INVISIBLE);
+            }
+        });
+
+        findViewById(R.id.searchVax).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new StateDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/states");
+            }
+        });
+    }
+
     public class StateDataDwnld extends AsyncTask<String, Void, String> {
 
         @Override
@@ -364,34 +370,27 @@ public class DashBoard extends AppCompatActivity {
 
                 JSONArray arr = new JSONArray(statesInfo);
 
-                EditText txtIn1 = findViewById(R.id.txtIn1);
+                txtIn1 = findViewById(R.id.txtIn1);
+                txtIn1.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        txtIn2.getText().clear();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
                 //binary searching
                 String resultID = binarySearching(arr, txtIn1.getText().toString(), "state_name", "state_id");
                 Log.i("Sourav", resultID);
                 new DistDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + resultID);
-
-                /*int lb=0,ub=arr.length();
-                while(lb<=ub){
-                    int mid = (lb+ub)/2;
-                    JSONObject jsonPart = arr.getJSONObject(mid);
-
-                    EditText txtIn1 = findViewById(R.id.txtIn1);
-                    int res = txtIn1.getText().toString().compareToIgnoreCase(jsonPart.getString("state_name"));
-                    Log.i("res",String.valueOf(res));
-                    if(res==0){
-                        Log.i("state id ",jsonPart.getString("state_id") );
-                        Toast.makeText(DashBoard.this, "state id of "+ jsonPart.getString("district_name") +" is"+ jsonPart.getString("state_id"), Toast.LENGTH_LONG).show();
-                        String state_id = jsonPart.getString("state_id");
-                        new DistDataDwnld().execute("https://cdn-api.co-vin.in/api/v2/admin/location/districts/"+state_id);
-                        break;
-                    }
-                    else if (res>0)
-                        lb=mid+1;
-                    else
-                        ub=mid-1;
-                }
-*/
-
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -443,10 +442,15 @@ public class DashBoard extends AppCompatActivity {
                 Log.i("Dist content", distInfo);
 
                 JSONArray arr = new JSONArray(distInfo);
-                EditText txtIn2 = findViewById(R.id.txtIn2);
+                txtIn2 = findViewById(R.id.txtIn2);
                 //binary searching
                 String resultID = binarySearching(arr, txtIn2.getText().toString(), "district_name", "district_id");
 
+                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                intent.putExtra("district_id", resultID);
+                intent.putExtra("state_name", txtIn1.getText().toString());
+                intent.putExtra("dist_name", txtIn2.getText().toString());
+                startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
